@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Matematika</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000000;
+            margin: 50px;
+        }
+        #game-container {
+            background: rgb(219, 219, 236);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            padding: 10px;
+            width: 100px;
+            text-align: center;
+            font-size: 18px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #message {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .correct {
+            color: rgb(30, 128, 0);
+            animation: correctAnimation 0.5s ease-in-out;
+        }
+        .wrong {
+            color: red;
+            animation: wrongAnimation 0.5s ease-in-out;
+        }
+        @keyframes correctAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes wrongAnimation {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h2>Game Matematika 🎮</h2>
+        <p>Ayok Jawab :</p>
+        <h3 id="question"></h3>
+        <input type="number" id="answer">
+        <button onclick="checkAnswer()">Jawab</button>
+        <p id="message"></p>
+        <p>Skor: <span id="score">0</span></p>
+        <button onclick="restartGame()">Mulai Lagiii</button>
+    </div>
+
+    <!-- Suara efek -->
+    <audio id="correctSound" src="https://www.fesliyanstudios.com/play-mp3/4389"></audio>
+    <audio id="wrongSound" src="https://www.fesliyanstudios.com/play-mp3/4391"></audio>
+
+    <script>
+        let num1, num2, correctAnswer, operator;
+        let score = 0;
+
+        function generateQuestion() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            let operations = ["+", "-", "*", "/", "^"];
+            operator = operations[Math.floor(Math.random() * operations.length)];
+
+            if (operator === "+") {
+                correctAnswer = num1 + num2;
+            } else if (operator === "-") {
+                correctAnswer = num1 - num2;
+            } else if (operator === "*") {
+                correctAnswer = num1 * num2;
+            }
+
+            document.getElementById("question").innerText = `${num1} ${operator} ${num2} = ?`;
+            document.getElementById("answer").value = "";
+        }
+
+        function checkAnswer() {
+            let userAnswer = parseFloat(document.getElementById("answer").value);
+            let message = document.getElementById("message");
+
+            if (isNaN(userAnswer)) {
+                message.innerText = "Masukkan angka!";
+                message.style.color = "red";
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                message.innerText = "🎉 Kamu Hebat! 🥳";
+                message.classList.remove("wrong");
+                message.classList.add("correct");
+                document.getElementById("correctSound").play();
+                score += 100;
+            } else {
+                message.innerText = "🤔 Jangan Menyerah Ayok Coba lagi! 🦾";
+                message.classList.remove("correct");
+                message.classList.add("wrong");
+                document.getElementById("wrongSound").play();
+                score -= 50;
+            }
+
+            document.getElementById("score").innerText = score;
+            setTimeout(generateQuestion, 1000);
+        }
+
+        function restartGame() {
+            score = 0;
+            document.getElementById("score").innerText = score;
+            document.getElementById("message").innerText = "";
+            generateQuestion();
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
